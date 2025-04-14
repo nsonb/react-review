@@ -103,4 +103,10 @@ const App = () => {
   );
 };
 
+/* State vs Props
+ 1. To a component, State is internal, Props is external
+ 2. State is change-able, Props is read-only
+ 3. Changes to both -> rerender
+*/
+
 export default App;
