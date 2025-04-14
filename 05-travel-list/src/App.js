@@ -17,13 +17,13 @@ const Form = (props) => {
     }
   };
 
-  const reset = (event) => {
-    event.preventDefault();
+  const reset = () => {
     setItem('');
     setCount(1);
   };
+
   return (
-    <form className="add-form">
+    <form className="add-form" onSubmit={submit}>
       <h3>What do you need for your trip?</h3>
       <input
         type="text"
@@ -36,10 +36,7 @@ const Form = (props) => {
           return <option key={'select' + c}>{c}</option>;
         })}
       </select>
-      <button type="submit" onClick={(e) => submit(e)}>
-        Add
-      </button>
-      <button onClick={(e) => reset(e)}>Reset</button>
+      <button type="submit">Add</button>
     </form>
   );
 };
@@ -85,12 +82,13 @@ const App = () => {
   ]);
 
   const addItem = (item) => {
-    setItemList((list) => [item, ...list]);
+    // add to tail of array for O(1)
+    setItemList((list) => [...list, item]);
   };
 
   const rmItem = (item) => {
     console.log(item);
-    // setItemList((list) => list.pop(item));
+    setItemList((list) => list.filter((i) => i !== item));
   };
 
   return (
