@@ -1,85 +1,11 @@
 import { useState } from 'react';
-
-const Logo = () => {
-  return <h1> Far Away </h1>;
-};
-
-const Form = (props) => {
-  const [item, setItem] = useState('');
-  const [count, setCount] = useState(1);
-
-  const submit = (event) => {
-    event.preventDefault();
-    if (item !== '') {
-      const newItem = { name: item, count: count, packed: false };
-      props.addItem(newItem);
-      reset();
-    }
-  };
-
-  const reset = () => {
-    setItem('');
-    setCount(1);
-  };
-
-  return (
-    <form className="add-form" onSubmit={submit}>
-      <h3>What do you need for your trip?</h3>
-      <input
-        type="text"
-        placeholder="Item name..."
-        value={item}
-        onChange={(e) => setItem(e.target.value)}
-      />
-      <select value={count} onChange={(e) => setCount(e.target.value)}>
-        {Array.from({ length: 20 }, (_, i) => i + 1).map((c) => {
-          return <option key={'select' + c}>{c}</option>;
-        })}
-      </select>
-      <button type="submit">Add</button>
-    </form>
-  );
-};
-
-const PackList = (props) => {
-  const { list, rmItem } = props;
-  const renderList = list.map((item) => {
-    return (
-      <li key={item.name + item.count}>
-        <span style={item.packed ? { textDecoration: 'line-through' } : {}}>
-          {item.count} {item.name}
-        </span>
-        <button
-          onClick={() => {
-            rmItem(item);
-          }}
-          style={{ color: 'red' }}
-        >
-          X
-        </button>
-      </li>
-    );
-  });
-  return (
-    <div className="list">
-      <ul>{renderList}</ul>
-    </div>
-  );
-};
-
-const Stats = (props) => {
-  return (
-    <em className="stats">
-      You have {props.count} items on your list. You have already packed X items
-    </em>
-  );
-};
+import Logo from './components/Logo';
+import Form from './components/Form';
+import PackList from './components/PackList';
+import Stats from './components/Stats';
 
 const App = () => {
-  const [itemList, setItemList] = useState([
-    { name: 'Toothbrush', count: 2, packed: true },
-    { name: 'Passport', count: 2, packed: false },
-  ]);
+  const [itemList, setItemList] = useState([]);
 
   const addItem = (item) => {
     // add to tail of array for O(1)
@@ -87,16 +13,31 @@ const App = () => {
   };
 
   const rmItem = (item) => {
-    console.log(item);
     setItemList((list) => list.filter((i) => i !== item));
+  };
+
+  const updateItem = (item, status) => {
+    setItemList((i) =>
+      i.map((i) => (i === item ? { ...i, packed: status } : i))
+    );
+  };
+
+  const resetList = () => {
+    const confirm = window.confirm('Are you sure?');
+    confirm && setItemList([]);
   };
 
   return (
     <main className="app">
       <Logo />
       <Form addItem={addItem} />
-      <PackList list={itemList} rmItem={rmItem} />
-      <Stats count={itemList.length} />
+      <PackList
+        list={itemList}
+        rmItem={rmItem}
+        updateItem={updateItem}
+        resetList={resetList}
+      />
+      <Stats itemList={itemList} />
     </main>
   );
 };
